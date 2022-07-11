@@ -1,0 +1,16 @@
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\bin\Debug\CrawData_Kaigonohonne.exe.config
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\bin\Debug\CrawData_Kaigonohonne.exe
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\bin\Debug\CrawData_Kaigonohonne.pdb
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\obj\Debug\CrawData_Kaigonohonne.csprojAssemblyReference.cache
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\obj\Debug\CrawData_Kaigonohonne.Properties.Resources.resources
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\obj\Debug\CrawData_Kaigonohonne.csproj.GenerateResource.cache
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\obj\Debug\CrawData_Kaigonohonne.csproj.CoreCompileInputs.cache
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\obj\Debug\CrawData_Kaigonohonne.exe
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\obj\Debug\CrawData_Kaigonohonne.pdb
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\obj\Debug\CrawData_Kaigonohonne.csproj.CopyComplete
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\obj\Debug\CrawData_Kaigonohonne.Form_CrawLinkPage.resources
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\bin\Debug\HtmlAgilityPack.dll
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\Admin\Documents\Project\CrawData_Kaigonohonne\CrawData_Kaigonohonne\bin\Debug\HtmlAgilityPack.xml
