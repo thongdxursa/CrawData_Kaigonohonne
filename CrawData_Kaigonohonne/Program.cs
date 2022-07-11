@@ -16,7 +16,7 @@ namespace CrawData_Kaigonohonne
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form_CrawLinkPage());
+            Application.Run(new Form_Manager());
         }
     }
 }

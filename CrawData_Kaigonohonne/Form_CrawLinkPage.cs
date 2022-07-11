@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -24,6 +25,7 @@ namespace CrawData_Kaigonohonne
 
         private async void  btn_craw_link_Click(object sender, EventArgs e)
         {
+            btn_craw_link.Enabled = false;
             if (tb_link_page.Text == null || tb_link_page.Text == "" || tb_link_page.Text.Length < 1)
             {
                 MessageBox.Show("Please enter link page!");
@@ -34,6 +36,12 @@ namespace CrawData_Kaigonohonne
                 MessageBox.Show("Please enter total!");
                 return;
             }
+            Thread thread = new Thread(new ThreadStart(RunCrawLinkPageParentOtherThread));
+            thread.Start();
+            
+        }
+        private void RunCrawLinkPageParentOtherThread()
+        {
             var _totalItem = tb_total_item_check();
             if (_totalItem == 0)
             {
@@ -78,7 +86,8 @@ namespace CrawData_Kaigonohonne
                 Libraries.ExportToJson(Libraries.pathRoot + "/craw_success_url_page_parent.json", listUrlResult);
                 Libraries.ExportToJson(Libraries.pathRoot + "/craw_error_url_page_parent.error", listUrlError);
                 Libraries.AddResultListBox("-------------------------craw data done: " + listUrlResult.Count() + "-------------craw data error:" + listUrlError.Count() + "-------------", lb_result);
-                MessageBox.Show("Process done! The result is saved at"+ Libraries.pathRoot);
+                MessageBox.Show("Process done! The result is saved at" + Libraries.pathRoot);
+                btn_craw_link.Enabled = true;
             }
         }
 

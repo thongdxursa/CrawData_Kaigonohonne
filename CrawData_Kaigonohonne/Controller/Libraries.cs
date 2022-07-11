@@ -11,7 +11,9 @@ namespace CrawData_Kaigonohonne.Controller
 {
     public static class Libraries
     {
-        public static string pathRoot = Path.Combine(@"C:/Users/" + Environment.UserName + "/Documents/", "Project/Data_Export_Craw_Kaigonohonne");
+        public static string pathOrg = Path.Combine(@"C:/Users/" + Environment.UserName + "/Documents/", "Project/");
+        public static string pathRoot = Path.Combine(pathOrg, "Data_Export_Craw_Kaigonohonne");
+        public static string UrlRoot = "https://www.kaigonohonne.com/";
         public static int SkipCount = 30;
         private static Random random = new Random();
         public static string RandomString(int length = 20)
