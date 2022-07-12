@@ -44,5 +44,11 @@ namespace CrawData_Kaigonohonne
             var frmCrawData = new Form_CrawDataPageItem();
             frmCrawData.ShowDialog();
         }
+
+        private void btn_download_img_Click(object sender, EventArgs e)
+        {
+            var frmDownload = new Form_DownloadImg();
+            frmDownload.ShowDialog();
+        }
     }
 }

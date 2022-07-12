@@ -54,6 +54,7 @@ namespace CrawData_Kaigonohonne
 
             using (var client = new WebClient())
             {
+                client.Encoding = System.Text.Encoding.UTF8;
                 List<string> listUrlResult = new List<string>();
                 List<string> listUrlError = new List<string>();
                 for (int index = 1; index <= totalPage; index++)
@@ -61,6 +62,7 @@ namespace CrawData_Kaigonohonne
                     var linkpageitem = linkpage + "?page=" + index;
                     Libraries.AddResultListBox("-------------------------Starting craw page item: " + linkpageitem + "----------------------------", lb_result);
                     string html = client.DownloadString(linkpageitem);
+                    html = html.Replace("<html lang=\"ja\">", "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"ja\" lang=\"ja\">");
                     HtmlAgilityPack.HtmlDocument document = new HtmlAgilityPack.HtmlDocument();
                     document.LoadHtml(html);
                     var nodes = document.DocumentNode.SelectNodes("//h3[contains(@class, 'c-card__title')]").ToList();
@@ -83,8 +85,8 @@ namespace CrawData_Kaigonohonne
                     }
                 }
 
-                Libraries.ExportToJson(Libraries.pathRoot + "/craw_success_url_page_parent.json", listUrlResult);
-                Libraries.ExportToJson(Libraries.pathRoot + "/craw_error_url_page_parent.error", listUrlError);
+                Libraries.ExportToJson(Libraries.pathRoot + "/craw_success_url_page_parent_"+ new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds()+".json", listUrlResult);
+                Libraries.ExportToJson(Libraries.pathRoot + "/craw_error_url_page_parent_" + new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds() + ".error", listUrlError);
                 Libraries.AddResultListBox("-------------------------craw data done: " + listUrlResult.Count() + "-------------craw data error:" + listUrlError.Count() + "-------------", lb_result);
                 MessageBox.Show("Process done! The result is saved at" + Libraries.pathRoot);
                 btn_craw_link.Enabled = true;

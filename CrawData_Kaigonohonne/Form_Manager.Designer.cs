@@ -31,6 +31,7 @@
             this.btn_craw_link_page = new System.Windows.Forms.Button();
             this.btn_split_file = new System.Windows.Forms.Button();
             this.btn_craw_data = new System.Windows.Forms.Button();
+            this.btn_download_img = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btn_craw_link_page
@@ -63,11 +64,22 @@
             this.btn_craw_data.UseVisualStyleBackColor = true;
             this.btn_craw_data.Click += new System.EventHandler(this.btn_craw_data_Click);
             // 
+            // btn_download_img
+            // 
+            this.btn_download_img.Location = new System.Drawing.Point(644, 37);
+            this.btn_download_img.Name = "btn_download_img";
+            this.btn_download_img.Size = new System.Drawing.Size(106, 32);
+            this.btn_download_img.TabIndex = 3;
+            this.btn_download_img.Text = "Download Img";
+            this.btn_download_img.UseVisualStyleBackColor = true;
+            this.btn_download_img.Click += new System.EventHandler(this.btn_download_img_Click);
+            // 
             // Form_Manager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(659, 99);
+            this.ClientSize = new System.Drawing.Size(813, 99);
+            this.Controls.Add(this.btn_download_img);
             this.Controls.Add(this.btn_craw_data);
             this.Controls.Add(this.btn_split_file);
             this.Controls.Add(this.btn_craw_link_page);
@@ -82,5 +94,6 @@
         private System.Windows.Forms.Button btn_craw_link_page;
         private System.Windows.Forms.Button btn_split_file;
         private System.Windows.Forms.Button btn_craw_data;
+        private System.Windows.Forms.Button btn_download_img;
     }
 }
