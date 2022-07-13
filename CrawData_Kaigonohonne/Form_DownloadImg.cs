@@ -20,6 +20,7 @@ namespace CrawData_Kaigonohonne
         public Form_DownloadImg()
         {
             InitializeComponent();
+            grB_download_by_folder.Visible = false;
         }
 
         List<Photo> listUrlPhoto = new List<Photo>();
@@ -27,26 +28,32 @@ namespace CrawData_Kaigonohonne
 
         private void btn_open_file_Click(object sender, EventArgs e)
         {
+            listUrlPhoto = new List<Photo>();
             Libraries.AddResultListBox(null, lb_result);
             Libraries.openFileDialog("Select File Scan Dialog", "File Scan data (*.json)|*.json|All files (*.*)|*.*", Libraries.pathRoot, (path) =>
             {
-                listUrlPhoto = Libraries.FileToObjectJson<List<Photo>>(path);
-                if (listUrlPhoto != null)
-                {
-                    fileName = Path.GetFileName(path);
-                    lb_path_file.Text = "Path file: " + path;
-                    Libraries.AddResultListBox("-------Reading data=============", lb_result);
-                    foreach (var itemPhoto in listUrlPhoto)
-                    {
-                        Libraries.AddResultListBox("Url item: " + itemPhoto.src, lb_result);
-                    }
-                    Libraries.AddResultListBox("-------Total: " + listUrlPhoto.Count(), lb_result);
-                }
-                else
-                {
-                    Libraries.AddResultListBox("404: Not found data" + listUrlPhoto.Count(), lb_result);
-                }
+                onReadFileSelected(path);
             });
+        }
+
+        private void onReadFileSelected(string path)
+        {
+            listUrlPhoto = Libraries.FileToObjectJson<List<Photo>>(path);
+            if (listUrlPhoto != null)
+            {
+                fileName = Path.GetFileName(path);
+                lb_path_file.Text = "Path file: " + path;
+                Libraries.AddResultListBox("-------Reading data=============", lb_result);
+                foreach (var itemPhoto in listUrlPhoto)
+                {
+                    Libraries.AddResultListBox("Url item: " + itemPhoto.src, lb_result);
+                }
+                Libraries.AddResultListBox("-------Total: " + listUrlPhoto.Count(), lb_result);
+            }
+            else
+            {
+                Libraries.AddResultListBox("404: Not found data" + listUrlPhoto.Count(), lb_result);
+            }
         }
 
         private void btn_download_img_Click(object sender, EventArgs e)
@@ -66,25 +73,12 @@ namespace CrawData_Kaigonohonne
             btn_open_file.Enabled = true;
         }
 
+       
         private void RunDownloadImgOtherThread()
         {
             using (WebClient client = new WebClient())
             {
-                var folderSave = Path.Combine(Libraries.pathRoot, "craw_data_page/");
-                if (!Directory.Exists(folderSave))
-                {
-                    Directory.CreateDirectory(folderSave);
-                }
-                var folderImg = Path.Combine(folderSave, "img/");
-                if (!Directory.Exists(folderImg))
-                {
-                    Directory.CreateDirectory(folderImg);
-                }
-                var folderImgDownload = Path.Combine(folderImg, fileName.Trim().ToLower().Replace(".json","")+"/");
-                if (!Directory.Exists(folderImgDownload))
-                {
-                    Directory.CreateDirectory(folderImgDownload);
-                }
+                var folderImgDownload = getFolderSave();
                 List<Photo> _success = new List<Photo>();
                 List<Photo> _error = new List<Photo>();
                 List<string> pathimgsave = new List<string>();
@@ -107,5 +101,57 @@ namespace CrawData_Kaigonohonne
             }
         }
 
+        private void btn_open_folder_Click(object sender, EventArgs e)
+        {
+            Libraries.AddResultListBox(null, lb_result);
+            Libraries.openFolderDialog((path) =>
+            {
+                string[] listFilesPath = Directory.GetFiles(path, "*.json", SearchOption.AllDirectories);
+                if (listFilesPath != null && listFilesPath.Count() > 0)
+                {
+                    foreach (var itemFilePath in listFilesPath)
+                    {
+                        listUrlPhoto = new List<Photo>();
+                        onReadFileSelected(itemFilePath);
+                        RunDownloadImgOtherThread();
+                    }
+                    MessageBox.Show("Process done! Download done");
+                }
+            });
+        }
+
+        private string getFolderSave()
+        {
+            var folderSave = Path.Combine(Libraries.pathRoot, "craw_data_page/");
+            if (!Directory.Exists(folderSave))
+            {
+                Directory.CreateDirectory(folderSave);
+            }
+            var folderImg = Path.Combine(folderSave, "img/");
+            if (!Directory.Exists(folderImg))
+            {
+                Directory.CreateDirectory(folderImg);
+            }
+            var folderImgDownload = Path.Combine(folderImg, fileName.Trim().ToLower().Replace(".json", "") + "/");
+            if (!Directory.Exists(folderImgDownload))
+            {
+                Directory.CreateDirectory(folderImgDownload);
+            }
+            return folderImgDownload;
+        }
+
+        private void cb_is_download_folder_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cb_is_download_folder.Checked)
+            {
+                grB_download_by_folder.Visible = true;
+                grB_download_by_file.Visible = false;
+            }
+            else
+            {
+                grB_download_by_file.Visible = true;
+                grB_download_by_folder.Visible = false;
+            }
+        }
     }
 }

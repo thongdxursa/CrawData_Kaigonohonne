@@ -97,6 +97,24 @@ namespace CrawData_Kaigonohonne.Controller
                 }
             }
         }
+        public static void openFolderDialog(Action<string> actionOK)
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                DialogResult result = fbd.ShowDialog();
+
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    //string[] files = Directory.GetFiles(fbd.SelectedPath);
+
+                    string path = fbd.SelectedPath;
+                    if (actionOK != null)
+                    {
+                        actionOK(path);
+                    }
+                }
+            }
+        }
         public static void AddResultListBox(string str, ListBox lbResults)
         {
 

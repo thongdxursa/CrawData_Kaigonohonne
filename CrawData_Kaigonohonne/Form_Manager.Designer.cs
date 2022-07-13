@@ -32,6 +32,7 @@
             this.btn_split_file = new System.Windows.Forms.Button();
             this.btn_craw_data = new System.Windows.Forms.Button();
             this.btn_download_img = new System.Windows.Forms.Button();
+            this.btn_merge_file = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btn_craw_link_page
@@ -66,7 +67,7 @@
             // 
             // btn_download_img
             // 
-            this.btn_download_img.Location = new System.Drawing.Point(644, 37);
+            this.btn_download_img.Location = new System.Drawing.Point(851, 37);
             this.btn_download_img.Name = "btn_download_img";
             this.btn_download_img.Size = new System.Drawing.Size(106, 32);
             this.btn_download_img.TabIndex = 3;
@@ -74,11 +75,22 @@
             this.btn_download_img.UseVisualStyleBackColor = true;
             this.btn_download_img.Click += new System.EventHandler(this.btn_download_img_Click);
             // 
+            // btn_merge_file
+            // 
+            this.btn_merge_file.Location = new System.Drawing.Point(651, 37);
+            this.btn_merge_file.Name = "btn_merge_file";
+            this.btn_merge_file.Size = new System.Drawing.Size(135, 32);
+            this.btn_merge_file.TabIndex = 4;
+            this.btn_merge_file.Text = "Merge file json data";
+            this.btn_merge_file.UseVisualStyleBackColor = true;
+            this.btn_merge_file.Click += new System.EventHandler(this.btn_merge_file_Click);
+            // 
             // Form_Manager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(813, 99);
+            this.ClientSize = new System.Drawing.Size(1015, 99);
+            this.Controls.Add(this.btn_merge_file);
             this.Controls.Add(this.btn_download_img);
             this.Controls.Add(this.btn_craw_data);
             this.Controls.Add(this.btn_split_file);
@@ -95,5 +107,6 @@
         private System.Windows.Forms.Button btn_split_file;
         private System.Windows.Forms.Button btn_craw_data;
         private System.Windows.Forms.Button btn_download_img;
+        private System.Windows.Forms.Button btn_merge_file;
     }
 }

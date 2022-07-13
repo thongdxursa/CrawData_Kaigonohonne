@@ -55,7 +55,7 @@
             // 
             // btn_craw_data_page
             // 
-            this.btn_craw_data_page.Location = new System.Drawing.Point(688, 23);
+            this.btn_craw_data_page.Location = new System.Drawing.Point(698, 47);
             this.btn_craw_data_page.Name = "btn_craw_data_page";
             this.btn_craw_data_page.Size = new System.Drawing.Size(75, 23);
             this.btn_craw_data_page.TabIndex = 2;

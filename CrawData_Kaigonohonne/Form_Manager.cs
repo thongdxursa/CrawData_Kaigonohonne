@@ -50,5 +50,11 @@ namespace CrawData_Kaigonohonne
             var frmDownload = new Form_DownloadImg();
             frmDownload.ShowDialog();
         }
+
+        private void btn_merge_file_Click(object sender, EventArgs e)
+        {
+            var frmMerge = new Form_Merge_File();
+            frmMerge.ShowDialog();
+        }
     }
 }

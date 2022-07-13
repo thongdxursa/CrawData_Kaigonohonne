@@ -97,6 +97,7 @@ namespace CrawData_Kaigonohonne
 
                         getPhoto(document, itemUrl);
                         datapagesSuccess.Add(itemDataPage);
+                        Thread.Sleep(1000);
                     }
                     catch (Exception ex)
                     {
