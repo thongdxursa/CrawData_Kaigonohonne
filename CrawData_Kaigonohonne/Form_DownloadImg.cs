@@ -100,7 +100,6 @@ namespace CrawData_Kaigonohonne
                         _error.Add(itemPhoto);
                     }
                 }
-                Libraries.ExportToJson(folderImgDownload + "/pathimgsave.json", pathimgsave);
                 Libraries.ExportToJson(folderImgDownload + "/download_img_succes.json", _success);
                 Libraries.ExportToJson(folderImgDownload + "/download_img_error.error", _error);
                 Libraries.AddResultListBox("-------------------------craw data done: " + _success.Count() + "-------------craw data error:" + _error.Count() + "-------------", lb_result);

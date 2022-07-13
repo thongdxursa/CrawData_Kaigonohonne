@@ -89,7 +89,7 @@ namespace CrawData_Kaigonohonne
                 {
                     var totolEx = ((i+1) * _total_per_page > listUrl.Count()) ? (listUrl.Count() - (i * _total_per_page)) : _total_per_page;
                     var _arrSplit = listUrl.GetRange(i * _total_per_page, totolEx);
-                    Libraries.ExportToJson(pathF + "/"+ fileName + "_" + i + "_" + new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds() + ".json", _arrSplit);
+                    Libraries.ExportToJson(pathF + "/"+ fileName + "_" + i + ".json", _arrSplit);
                     Libraries.AddResultListBox("-------------split file data done, save at: " + pathF + "/" + fileName + "_" + i + "_" + new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds() + ".json", lb_result);
                 }
                 catch (Exception ex)

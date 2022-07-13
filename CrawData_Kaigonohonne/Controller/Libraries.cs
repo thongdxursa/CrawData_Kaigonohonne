@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -136,6 +137,22 @@ namespace CrawData_Kaigonohonne.Controller
             }
             folderpath = folderpath.Replace(@"\\", @"\");
             return folderpath;
+        }
+
+        public static string FormatString(string text)
+        {
+            if (text == null)
+            {
+                return "";
+            }
+            text = text.Trim();
+            text = text.Replace("\n", "");
+
+            RegexOptions options = RegexOptions.None;
+            Regex regex = new Regex("[ ]{2,}", options);
+            text = regex.Replace(text, " ");
+            
+            return text;
         }
         
     }

@@ -84,9 +84,12 @@ namespace CrawData_Kaigonohonne
                         }
                     }
                 }
-
-                Libraries.ExportToJson(Libraries.pathRoot + "/craw_success_url_page_parent_"+ new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds()+".json", listUrlResult);
-                Libraries.ExportToJson(Libraries.pathRoot + "/craw_error_url_page_parent_" + new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds() + ".error", listUrlError);
+                var _t = tb_link_page.Text.Replace("/", "_");
+                _t = tb_link_page.Text.Replace(".", "_");
+                _t = tb_link_page.Text.Replace("https", "");
+                _t = tb_link_page.Text.Replace("http", "");
+                Libraries.ExportToJson(Libraries.pathRoot + "/craw_success_url_page_parent_"+ _t + ".json", listUrlResult);
+                Libraries.ExportToJson(Libraries.pathRoot + "/craw_error_url_page_parent_" + _t + ".error", listUrlError);
                 Libraries.AddResultListBox("-------------------------craw data done: " + listUrlResult.Count() + "-------------craw data error:" + listUrlError.Count() + "-------------", lb_result);
                 MessageBox.Show("Process done! The result is saved at" + Libraries.pathRoot);
                 btn_craw_link.Enabled = true;

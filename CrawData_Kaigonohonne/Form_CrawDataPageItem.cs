@@ -23,6 +23,7 @@ namespace CrawData_Kaigonohonne
         }
 
         List<string> listUrl = new List<string>();
+        string fileName = "";
 
         private void btn_open_file_link_Click(object sender, EventArgs e)
         {
@@ -30,6 +31,7 @@ namespace CrawData_Kaigonohonne
             Libraries.openFileDialog("Select File Scan Dialog", "File Scan data (*.json)|*.json|All files (*.*)|*.*", Libraries.pathRoot, (path) =>
             {
                 listUrl = Libraries.FileToObjectJson<List<string>>(path);
+                fileName = Path.GetFileName(path).Replace(".json", "");
                 if (listUrl != null)
                 {
                     lb_file_path.Text = "Path file: " + path;
@@ -107,8 +109,8 @@ namespace CrawData_Kaigonohonne
                 {
                     Directory.CreateDirectory(folderSave);
                 }
-                Libraries.ExportToJson(folderSave + "/craw_success_data_page_" + new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds() + ".json", datapagesSuccess);
-                Libraries.ExportToJson(folderSave + "/craw_error_data_page_" + new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds() + ".json", datapagesError);
+                Libraries.ExportToJson(folderSave + "/craw_success_page_" + fileName + ".json", datapagesSuccess);
+                Libraries.ExportToJson(folderSave + "/craw_error_page_" + fileName + ".error", datapagesError);
                 Libraries.AddResultListBox("-------------------------craw data done: " + datapagesSuccess.Count() + "-------------craw data error:" + datapagesError.Count() + "-------------", lb_result);
                 MessageBox.Show("Process done! The result is saved at" + folderSave);
             }
@@ -116,18 +118,41 @@ namespace CrawData_Kaigonohonne
 
         private List<ShortDescription> getShortDescription(HtmlAgilityPack.HtmlDocument document) {
             List<ShortDescription> result = new List<ShortDescription>();
-            var nodesLi = document.DocumentNode.SelectNodes("//li[contains(@class, 'c-jigyosho-summary')]").ToList();
+            var nodesLi = document.DocumentNode.SelectNodes("//li[contains(@class, 'c-list__item c-jigyosho-summary')]").ToList();
             if (nodesLi != null && nodesLi.Count() > 0)
             {
                 foreach (var itemNode in nodesLi)
                 {
                     ShortDescription itemresult = new ShortDescription();
-                    var dddd = itemNode.InnerText;
-                    var __headNode = itemNode.SelectSingleNode("//div[contains(@class, 'c-jigyosho-summary__head')]");
-                    itemresult.title = (__headNode != null) ? __headNode.InnerText : "";
+                    HtmlAgilityPack.HtmlNode __headNode;
+                    try
+                    {
+                        __headNode = itemNode.SelectSingleNode(".//div[contains(@class, 'c-jigyosho-summary__head')]");
+                        if (__headNode == null)
+                        {
+                            __headNode = itemNode.SelectSingleNode(".//p[contains(@class, 'c-jigyosho-summary__head')]");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        __headNode = null;
+                    }
+                    itemresult.title = (__headNode != null) ? Libraries.FormatString(__headNode.InnerText) : "";
 
-                    var __mainNode = itemNode.SelectSingleNode("//div[contains(@class, 'c-jigyosho-summary__main')]");
-                    itemresult.value = (__mainNode != null) ? __mainNode.InnerText : "";
+                    HtmlAgilityPack.HtmlNode __mainNode;
+                    try
+                    {
+                        __mainNode = itemNode.SelectSingleNode(".//div[contains(@class, 'c-jigyosho-summary__main')]");
+                        if (__mainNode == null)
+                        {
+                            __mainNode = itemNode.SelectSingleNode(".//p[contains(@class, 'c-jigyosho-summary__main')]");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        __mainNode = null;
+                    }
+                    itemresult.value = (__mainNode != null) ? Libraries.FormatString(__mainNode.InnerText) : "";
                     result.Add(itemresult);
                 }
             }
@@ -136,195 +161,230 @@ namespace CrawData_Kaigonohonne
 
         private List<string> getRecommend(HtmlAgilityPack.HtmlDocument document)
         {
-            List<string> result = new List<string>(); 
-            var nodesLi = document.DocumentNode.SelectNodes("//li[contains(@class, 'p-jigyosho-recommend-message__item')]").ToList();
-            if (nodesLi != null && nodesLi.Count() > 0)
+            List<string> result = new List<string>();
+            try
             {
-                foreach (var itemNode in nodesLi)
+                var nodesLi = document.DocumentNode.SelectNodes("//li[contains(@class, 'p-jigyosho-recommend-message__item')]").ToList();
+                if (nodesLi != null && nodesLi.Count() > 0)
                 {
-                    result.Add(itemNode.InnerText);
+                    foreach (var itemNode in nodesLi)
+                    {
+                        result.Add(Libraries.FormatString(itemNode.InnerText));
+                    }
+                }
+                else
+                {
+                    var appear_message__text = document.DocumentNode.SelectSingleNode("//li[contains(@class, 'p-jigyosho-automated-appeal-message__text')]");
+                    if (appear_message__text != null)
+                    {
+                        result.Add(Libraries.FormatString(appear_message__text.InnerText));
+                    }
                 }
             }
-            else
+            catch (Exception ex)
             {
-                var appear_message__text = document.DocumentNode.SelectSingleNode("//li[contains(@class, 'p-jigyosho-automated-appeal-message__text')]");
-                if (appear_message__text!=null)
-                {
-                    result.Add(appear_message__text.InnerText);
-                }
+
             }
             return result;
         }
 
         private List<Commitment> getCommitment(HtmlAgilityPack.HtmlDocument document)
         {
-            List<Commitment> result = new List<Commitment>(); 
-            var nodesTags = document.GetElementbyId("jigyosho_tags");
-            if (nodesTags != null)
+            List<Commitment> result = new List<Commitment>();
+            try
             {
-                var nodesA = nodesTags.SelectNodes("//a[contains(@class, 'c-label c-label--blue-bright c-jigyosho-summary__label')]").ToList();
-                if (nodesA != null && nodesA.Count() > 0)
+                var nodesTags = document.GetElementbyId("jigyosho_tags");
+                if (nodesTags != null)
                 {
-                    foreach (var itemNode in nodesA)
+                    var nodesA = nodesTags.SelectNodes("//a[contains(@class, 'c-label c-label--blue-bright c-jigyosho-summary__label')]").ToList();
+                    if (nodesA != null && nodesA.Count() > 0)
                     {
-                        Commitment itemResult = new Commitment();
-                        itemResult.content = itemNode.InnerText;
-                        itemResult.href = itemNode.GetAttributeValue("href", "");
-                        result.Add(itemResult);
+                        foreach (var itemNode in nodesA)
+                        {
+                            Commitment itemResult = new Commitment();
+                            itemResult.content = Libraries.FormatString(itemNode.InnerText);
+                            itemResult.href = itemNode.GetAttributeValue("href", "");
+                            result.Add(itemResult);
+                        }
                     }
                 }
+            }
+            catch(Exception ex)
+            {
+
             }
             return result;
         }
 
         private List<MedicalNursingSystem> getMedicalNursingSystem(HtmlAgilityPack.HtmlDocument document)
         {
-            List<MedicalNursingSystem> result = new List<MedicalNursingSystem>(); 
-            var nodesM = document.DocumentNode.SelectNodes("//div[contains(@class, 'p-jigyosho-medical__item')]").ToList();
-            if (nodesM != null && nodesM.Count() > 0)
+            List<MedicalNursingSystem> result = new List<MedicalNursingSystem>();
+            try
             {
-                foreach (var itemNode in nodesM)
+                var nodesM = document.DocumentNode.SelectNodes("//div[contains(@class, 'p-jigyosho-medical__item')]").ToList();
+                if (nodesM != null && nodesM.Count() > 0)
                 {
-                    MedicalNursingSystem itemResult = new MedicalNursingSystem();
-                    var _maker = itemNode.InnerHtml;
-                    itemResult.content = itemNode.InnerText;
-                    if (_maker.Contains("c-icon-circle-red"))
+                    foreach (var itemNode in nodesM)
                     {
-                        itemResult.status = "Acceptable";
-                    }else if (_maker.Contains("c-icon-cross-mark"))
-                    {
-                        itemResult.status = "Unacceptable";
+                        MedicalNursingSystem itemResult = new MedicalNursingSystem();
+                        var _maker = itemNode.InnerHtml;
+                        itemResult.content = Libraries.FormatString(itemNode.InnerText);
+                        if (_maker.Contains("c-icon-circle-red"))
+                        {
+                            itemResult.status = "Acceptable";
+                        }
+                        else if (_maker.Contains("c-icon-cross-mark"))
+                        {
+                            itemResult.status = "Unacceptable";
+                        }
+                        else
+                        {
+                            itemResult.status = "Please contact us";
+                        }
+                        result.Add(itemResult);
                     }
-                    else
-                    {
-                        itemResult.status = "Please contact us";
-                    }
-                    result.Add(itemResult);
                 }
             }
+            catch (Exception ex) { }
             return result;
         }
 
         private List<PricePlan> getPricePlan(HtmlAgilityPack.HtmlDocument document)
         {
             List<PricePlan> result = new List<PricePlan>();
-            PricePlan itemR = new PricePlan();
-            itemR.title = "";
-            var nodesitemR = document.DocumentNode.SelectNodes("//div[contains(@class, 'c-jg-price__line__item')]").ToList();
-            if (nodesitemR != null && nodesitemR.Count() > 0)
+            try
             {
-                foreach (var item in nodesitemR)
+                PricePlan itemR = new PricePlan();
+                itemR.title = "";
+                var nodesitemR = document.DocumentNode.SelectNodes("//div[contains(@class, 'c-jg-price__line__item')]").ToList();
+                if (nodesitemR != null && nodesitemR.Count() > 0)
                 {
-                    itemR.detail.Add(item.InnerText);
-                }
-            }
-            result.Add(itemR);
-
-            var nodesDetail = document.DocumentNode.SelectNodes("//div[contains(@class, 'p-jigyosho-plan js-drop-down')]").ToList();
-            if (nodesDetail != null && nodesDetail.Count() > 0)
-            {
-                foreach (var itemNode in nodesDetail)
-                {
-                    PricePlan itemResult = new PricePlan();
-                    var _h3 = itemNode.SelectSingleNode(".//h3");
-                    itemResult.title = _h3.InnerText;
-                    var _detail = itemNode.SelectNodes("//div[contains(@class, 'p-jigyosho-plan__table-block')]").ToList();
-                    if (_detail != null && _detail.Count > 0)
+                    foreach (var item in nodesitemR)
                     {
-                        foreach (var itemDetail in _detail)
-                        {
-                            itemResult.detail.Add(itemDetail.InnerText);
-                        }
+                        itemR.detail.Add(Libraries.FormatString(item.InnerText));
                     }
-                    result.Add(itemResult);
+                }
+                result.Add(itemR);
+
+                var nodesDetail = document.DocumentNode.SelectNodes("//div[contains(@class, 'p-jigyosho-plan js-drop-down')]").ToList();
+                if (nodesDetail != null && nodesDetail.Count() > 0)
+                {
+                    foreach (var itemNode in nodesDetail)
+                    {
+                        PricePlan itemResult = new PricePlan();
+                        var _h3 = itemNode.SelectSingleNode(".//h3");
+                        itemResult.title = Libraries.FormatString(_h3.InnerText);
+                        var _detail = itemNode.SelectNodes(".//div[contains(@class, 'p-jigyosho-plan__table-block')]").ToList();
+                        if (_detail != null && _detail.Count > 0)
+                        {
+                            foreach (var itemDetail in _detail)
+                            {
+                                itemResult.detail.Add(Libraries.FormatString(itemDetail.InnerText));
+                            }
+                        }
+                        result.Add(itemResult);
+                    }
                 }
             }
+            catch (Exception ex) { }
             return result;
         }
 
         private List<FacilityDetails> getFacilityDetails(HtmlAgilityPack.HtmlDocument document)
         {
             List<FacilityDetails> result = new List<FacilityDetails>();
-            var nodesFindId = document.GetElementbyId("facility");
-            if (nodesFindId != null)
+            try
             {
-                var nodesData = nodesFindId.SelectNodes("//tr[contains(@class, 'p-jigyosho-table__tr')]").ToList();
-                if (nodesData != null && nodesData.Count() > 0)
+                var nodesFindId = document.GetElementbyId("facility");
+                if (nodesFindId != null)
                 {
-                    foreach (var itemNode in nodesData)
+                    var nodesData = nodesFindId.SelectNodes(".//tr[contains(@class, 'p-jigyosho-table__tr')]").ToList();
+                    if (nodesData != null && nodesData.Count() > 0)
                     {
-                        FacilityDetails itemResult = new FacilityDetails();
-                        itemResult.name = itemNode.SelectSingleNode(".//th").InnerText;
-                        itemResult.detail = itemNode.SelectSingleNode(".//td").InnerText;
-                        result.Add(itemResult);
+                        foreach (var itemNode in nodesData)
+                        {
+                            FacilityDetails itemResult = new FacilityDetails();
+                            itemResult.name = Libraries.FormatString(itemNode.SelectSingleNode(".//th").InnerText);
+                            itemResult.detail = Libraries.FormatString(itemNode.SelectSingleNode(".//td").InnerText);
+                            result.Add(itemResult);
+                        }
                     }
                 }
             }
+            catch (Exception ex) { }
             return result;
         }
 
         private MapDetails getMapDetails(HtmlAgilityPack.HtmlDocument document)
         {
             MapDetails result = new MapDetails();
-            var nodesFind = document.DocumentNode.SelectSingleNode("//div[contains(@class, 'c-jg-map')]");
-            if (nodesFind != null)
+            try
             {
-                var nodesIframe = nodesFind.SelectSingleNode(".//iframe");
-                result.link = nodesIframe.GetAttributeValue("src", "");
-                var _access = nodesFind.SelectNodes("//p[contains(@class, 'c-jg-content-box__content')]").ToList();
-                if (_access != null && _access.Count() == 2)
+                var nodesFind = document.DocumentNode.SelectSingleNode("//div[contains(@class, 'c-jg-map')]");
+                if (nodesFind != null)
                 {
-                    result.address = _access[0].InnerText;
-                    result.traffic_access = _access[1].InnerText;
+                    var nodesIframe = nodesFind.SelectSingleNode(".//iframe");
+                    result.link = nodesIframe.GetAttributeValue("src", "");
+                    var _access = nodesFind.SelectNodes(".//p[contains(@class, 'c-jg-content-box__content')]").ToList();
+                    if (_access != null && _access.Count() == 2)
+                    {
+                        result.address = Libraries.FormatString(_access[0].InnerText);
+                        result.traffic_access = Libraries.FormatString(_access[1].InnerText);
+                    }
                 }
             }
+            catch (Exception ex) { }
             return result;
         }
 
         private void getPhoto(HtmlAgilityPack.HtmlDocument document, string urlitem)
         {
-            var nodesFindPhoto = document.GetElementbyId("top");
-            List<Photo> listUrl = new List<Photo>();
-            if (nodesFindPhoto != null)
+            try
             {
-                var nodesImg = nodesFindPhoto.SelectNodes(".//img");
-                if (nodesImg != null && nodesImg.Count() > 0)
+                var nodesFindPhoto = document.GetElementbyId("top");
+                List<Photo> listUrl = new List<Photo>();
+                if (nodesFindPhoto != null)
                 {
-                    var index = 0;
-                    foreach (var item in nodesImg)
+                    var nodesImg = nodesFindPhoto.SelectNodes(".//img");
+                    if (nodesImg != null && nodesImg.Count() > 0)
                     {
-                        Photo itemPhoto = new Photo();
-                        itemPhoto.src = item.GetAttributeValue("src", "");
-                        var _alt = item.GetAttributeValue("alt", "");
-                        itemPhoto.alt = _alt + "_"+ index;
-                        listUrl.Add(itemPhoto);
-                        index++;
+                        var index = 0;
+                        foreach (var item in nodesImg)
+                        {
+                            Photo itemPhoto = new Photo();
+                            itemPhoto.src = item.GetAttributeValue("src", "");
+                            var _alt = item.GetAttributeValue("alt", "");
+                            itemPhoto.alt = _alt + "_" + index;
+                            listUrl.Add(itemPhoto);
+                            index++;
+                        }
                     }
+                    var folderSave = Path.Combine(Libraries.pathRoot, "craw_data_page/");
+                    if (!Directory.Exists(folderSave))
+                    {
+                        Directory.CreateDirectory(folderSave);
+                    }
+                    var folderImg = Path.Combine(folderSave, "img/");
+                    if (!Directory.Exists(folderImg))
+                    {
+                        Directory.CreateDirectory(folderImg);
+                    }
+                    var nameFolder = urlitem.Trim().ToLower().Replace("/", "_");
+                    var folderImgItem = Path.Combine(folderImg, nameFolder);
+                    if (!Directory.Exists(folderImgItem))
+                    {
+                        Directory.CreateDirectory(folderImgItem);
+                    }
+                    Libraries.ExportToJson(folderImgItem + "/" + nameFolder + ".json", listUrl);
+                    Libraries.AddResultListBox("------------craw img done, save at: " + folderImgItem + "/" + nameFolder + ".json" + "-------------", lb_result);
                 }
-                var folderSave = Path.Combine(Libraries.pathRoot, "craw_data_page/");
-                if (!Directory.Exists(folderSave))
-                {
-                    Directory.CreateDirectory(folderSave);
-                }
-                var folderImg = Path.Combine(folderSave, "img/");
-                if (!Directory.Exists(folderImg))
-                {
-                    Directory.CreateDirectory(folderImg);
-                }
-                var nameFolder = urlitem.Trim().ToLower().Replace("/", "_");
-                var folderImgItem = Path.Combine(folderImg, nameFolder);
-                if (!Directory.Exists(folderImgItem))
-                {
-                    Directory.CreateDirectory(folderImgItem);
-                }
-                Libraries.ExportToJson(folderImgItem + "/"+ nameFolder + ".json", listUrl);
-                Libraries.AddResultListBox("------------craw img done, save at: " + folderImgItem + "/" + nameFolder + ".json" + "-------------", lb_result);
+            }catch(Exception ex)
+            {
+                Libraries.AddResultListBox("------------Error!!!!!!!!!!!!! Can not download image-------------", lb_result);
+
             }
 
         }
-
-
-
 
     }
 }
